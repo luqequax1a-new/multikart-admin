@@ -1,0 +1,131 @@
+<form [formGroup]="unitsForm" (ngSubmit)="onSubmit()" novalidate class="position-relative units-form">
+  <div class="row g-4">
+    <!-- Sol Kolon: Ad -->
+    <div class="col-md-6">
+      <div class="mb-0">
+        <label for="name" class="form-label fw-600 mb-2">
+          {{ 'Ad' | translate }} <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('name')"
+          formControlName="name"
+          placeholder="Birim adını giriniz"
+          maxlength="50"
+          [attr.aria-invalid]="isFieldInvalid('name')"
+          [attr.aria-describedby]="isFieldInvalid('name') ? 'name-error' : 'name-help'"
+        />
+        <small id="name-help" class="text-muted d-block mt-1">
+          Örn: Adet, Metre
+        </small>
+        <small id="name-error" class="text-danger mt-1" *ngIf="isFieldInvalid('name')">
+          {{ getFieldError('name') }}
+        </small>
+      </div>
+    </div>
+
+    <!-- Sağ Kolon: Kısa Metin -->
+    <div class="col-md-6">
+      <div class="mb-0">
+        <label for="text" class="form-label fw-600 mb-2">
+          {{ 'Kısa Metin' | translate }} <span class="text-danger">*</span>
+        </label>
+        <input
+          type="text"
+          id="text"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('text')"
+          formControlName="text"
+          placeholder="Kısa metin (ürün yanında)"
+          maxlength="10"
+          [attr.aria-invalid]="isFieldInvalid('text')"
+          [attr.aria-describedby]="isFieldInvalid('text') ? 'text-error' : 'text-help'"
+        />
+        <small id="text-help" class="text-muted d-block mt-1">
+          Örn: ad, m, kg
+        </small>
+        <small id="text-error" class="text-danger mt-1" *ngIf="isFieldInvalid('text')">
+          {{ getFieldError('text') }}
+        </small>
+      </div>
+    </div>
+
+    <!-- Sol Kolon: Step -->
+    <div class="col-md-6">
+      <div class="mb-0">
+        <label for="step" class="form-label fw-600 mb-2">
+          {{ 'Adım (Step)' | translate }} <span class="text-danger">*</span>
+        </label>
+        <input
+          type="number"
+          id="step"
+          class="form-control"
+          [class.is-invalid]="isFieldInvalid('step')"
+          formControlName="step"
+          step="0.1"
+          min="0.1"
+          max="999.9"
+          inputmode="decimal"
+          placeholder="0.5"
+          (input)="onStepInput($event)"
+          [attr.aria-invalid]="isFieldInvalid('step')"
+          [attr.aria-describedby]="isFieldInvalid('step') ? 'step-error' : 'step-help'"
+        />
+        <small id="step-help" class="text-muted d-block mt-1">
+          Maksimum 1 ondalık basamak. Örn: 0.5, 2.5, 10.1
+        </small>
+        <small id="step-error" class="text-danger mt-1" *ngIf="isFieldInvalid('step')">
+          {{ getFieldError('step') }}
+        </small>
+      </div>
+    </div>
+
+    <!-- Sağ Kolon: Durum -->
+    <div class="col-md-6">
+      <div class="mb-0">
+        <label class="form-label fw-600 mb-2">
+          {{ 'Durum' | translate }}
+        </label>
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="fw-500" [class.text-success]="unitsForm.get('is_active')?.value" [class.text-muted]="!unitsForm.get('is_active')?.value">
+              {{ unitsForm.get('is_active')?.value ? 'Aktif' : 'Pasif' }}
+            </span>
+            <div class="form-check form-switch">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                role="switch" 
+                id="status_switch"
+                [checked]="unitsForm.get('is_active')?.value"
+                (change)="unitsForm.get('is_active')?.setValue($event.target.checked)"
+                style="transform: scale(1.5);"
+              >
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Alt Butonlar -->
+  <div class="d-flex justify-content-end gap-2 mt-4 flex-column flex-sm-row">
+    <button
+      type="button"
+      class="btn btn-secondary w-100 w-sm-auto"
+      [disabled]="loading"
+      (click)="onCancel()"
+    >
+      {{ 'İptal' | translate }}
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary w-100 w-sm-auto"
+      [disabled]="loading"
+      [attr.title]="loading ? 'Kaydediliyor…' : ''"
+    >
+      <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+      {{ loading ? 'Kaydediliyor...' : 'Kaydet' | translate }}
+    </button>
+  </div>
+</form>

@@ -1,0 +1,146 @@
+<div class="container-fluid px-xxl-5 px-lg-4 px-3">
+  <div class="page-title pt-2 pb-0">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <h4 class="mb-0 fw-600">Birimler ({{ total }})</h4>
+      <button class="btn btn-primary" (click)="onCreate()">
+        <i class="icon-plus me-1"></i> Yeni Birim
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid px-xxl-5 px-lg-4 px-3 units-page">
+  <div class="card shadow-sm border-0 rounded-3 mt-3">
+    <div class="card-body p-0">
+      <div *ngIf="loading" class="text-center py-5">
+        <app-loader></app-loader>
+      </div>
+
+      <ng-container *ngIf="!loading">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Ad</th>
+                <th>Kısa Metin</th>
+                <th>Adım (Step)</th>
+                <th>Durum</th>
+                <th style="width:160px">Aksiyonlar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let unit of pagedUnits">
+                <td class="fw-600">{{ unit.name }}</td>
+                <td>{{ unit.text }}</td>
+                <td class="fw-600">{{ formatStepDisplay(unit.step) }}</td>
+                <td>
+                  <button type="button"
+                          class="badge rounded-pill border-0 px-3 py-2"
+                          [class.bg-success-subtle]="unit.is_active"
+                          [class.text-success]="unit.is_active"
+                          [class.bg-danger-subtle]="!unit.is_active"
+                          [class.text-danger]="!unit.is_active"
+                          role="button"
+                          (click)="onToggleStatus(unit)">
+                    {{ unit.is_active ? 'Aktif' : 'Pasif' }}
+                  </button>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <a [routerLink]="['/units/edit', unit.id]" class="btn btn-light btn-sm border">
+                      <i class="ri-edit-line me-1"></i> <span class="d-none d-sm-inline">Düzenle</span>
+                    </a>
+                    <button type="button" 
+                            class="btn btn-outline-danger btn-sm" 
+                            [disabled]="(unit.products_count ?? 0) > 0"
+                            [title]="(unit.products_count ?? 0) > 0 ? 'Bu birim ürünlerde kullanılıyor, silinemez' : 'Sil'"
+                            (click)="openDeleteModal(unit)">
+                      <i class="ri-delete-bin-line me-1"></i> <span class="d-none d-sm-inline">Sil</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div *ngIf="(pagedUnits?.length ?? 0) === 0" class="py-5 text-center text-muted">
+            <app-no-data [text]="'No Records Found'"></app-no-data>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <app-pagination
+    *ngIf="totalItems > itemsPerPage"
+    class="mt-3"
+    [currentPage]="currentPage"
+    [total]="totalItems"
+    [pageSize]="itemsPerPage"
+    (setPage)="onPageChange($event)">
+  </app-pagination>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">{{ 'Silme Onayı' | translate }}</h5>
+        <button type="button" class="btn-close" (click)="closeDeleteModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>{{ 'Bu birimi silmek istediğinizden emin misiniz?' | translate }}</p>
+        <p class="text-muted">{{ 'Bu işlem geri alınamaz.' | translate }}</p>
+        <div *ngIf="selectedUnit" class="alert alert-warning">
+          <strong>{{ selectedUnit.name }}</strong> birimi silinecek.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeDeleteModal()" [disabled]="loading">
+          {{ 'İptal' | translate }}
+        </button>
+        <button type="button" class="btn btn-danger" (click)="confirmDelete()" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          {{ loading ? 'Siliniyor...' : 'Sil' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Replace Unit Modal -->
+<div class="modal fade" id="replaceModal" tabindex="-1" aria-labelledby="replaceModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="replaceModalLabel">{{ 'Birim Değiştir' | translate }}</h5>
+        <button type="button" class="btn-close" (click)="closeReplaceModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>{{ 'Bu birim ürünlerde kullanılıyor. Hangi birimle değiştirmek istiyorsunuz?' | translate }}</p>
+        <div *ngIf="selectedUnit" class="alert alert-info">
+          <strong>{{ selectedUnit.name }}</strong> birimi değiştirilecek.
+        </div>
+        <div class="mb-3">
+          <label class="form-label">{{ 'Yeni Birim Seçin' | translate }}</label>
+          <select class="form-select" [(ngModel)]="selectedReplaceUnitId">
+            <option value="">{{ 'Birim seçin...' | translate }}</option>
+            <option *ngFor="let unit of availableUnits" [value]="unit.id">
+              {{ unit.name }} ({{ unit.text }})
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeReplaceModal()" [disabled]="loading">
+          {{ 'İptal' | translate }}
+        </button>
+        <button type="button" class="btn btn-primary" (click)="confirmReplace()" [disabled]="loading || !selectedReplaceUnitId">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          {{ loading ? 'Değiştiriliyor...' : 'Değiştir' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

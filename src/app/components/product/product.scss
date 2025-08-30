@@ -1,0 +1,172 @@
+.table th, .table td {
+  white-space: nowrap;
+}
+
+.table td.text-end {
+  text-align: right;
+}
+
+.badge {
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .table-responsive {
+    border-radius: .5rem;
+  }
+}
+
+// Search autocomplete styles
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.hover-bg-light:hover {
+  background-color: #f8f9fa !important;
+}
+
+// Ensure consistent input heights
+.form-control, .form-select {
+  height: calc(1.5em + 0.5rem + 2px);
+}
+
+.form-control-sm, .form-select-sm {
+  height: calc(1.5em + 0.25rem + 2px);
+}
+
+// Custom column widths for filter layout
+@media (min-width: 768px) {
+  .col-md-15 {
+    flex: 0 0 15%;
+    max-width: 15%;
+  }
+  
+  .col-md-35 {
+    flex: 0 0 35%;
+    max-width: 35%;
+  }
+}
+
+// Mobile responsive layout - 4 rows full width
+@media (max-width: 767.98px) {
+  // Force all filter columns to full width on mobile
+  .filter-row {
+    .col-12 {
+      flex: 0 0 100% !important;
+      max-width: 100% !important;
+      margin-bottom: 1rem;
+    }
+  }
+  
+  // Larger inputs on mobile for better usability
+  .form-control, .form-select {
+    height: calc(1.5em + 1rem + 2px);
+    font-size: 1rem;
+    width: 100%;
+  }
+  
+  // Input group adjustments for mobile
+  .input-group-lg .form-control {
+    height: calc(1.5em + 1rem + 2px);
+  }
+  
+  .input-group-lg .input-group-text {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+  }
+  
+  // Mobile header buttons - show text on mobile
+  .btn {
+    span {
+      display: inline !important;
+    }
+    
+    // Smaller buttons on mobile
+    &.btn-outline-primary,
+    &.btn-outline-secondary,
+    &.btn-primary {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      
+      i {
+        font-size: 1rem;
+      }
+    }
+  }
+  
+  // Table responsive improvements for mobile
+  .table {
+    font-size: 0.875rem;
+    
+    th, td {
+      padding: 0.5rem 0.25rem;
+      white-space: nowrap;
+      
+      // Show all text in table cells
+      &.d-none {
+        display: table-cell !important;
+      }
+    }
+    
+    // Make table headers smaller but visible
+    thead th {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    // Adjust image sizes for mobile
+    img {
+      width: 40px !important;
+      height: 40px !important;
+    }
+    
+    // Badge adjustments
+    .badge {
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+    }
+    
+    // Button adjustments in table
+    .btn-sm {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+  }
+  
+  // Ensure table container uses full width
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  // Stack buttons vertically on very small screens
+  @media (max-width: 575.98px) {
+    .d-flex.gap-2 {
+      flex-direction: column;
+      width: 100%;
+      
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}
+
+// Enhanced form controls for better usability
+.form-control-lg, .form-select-lg {
+  height: calc(1.5em + 1rem + 2px);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+}
+
+.input-group-lg .form-control {
+  height: calc(1.5em + 1rem + 2px);
+}
+
+.input-group-lg .input-group-text {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+}
