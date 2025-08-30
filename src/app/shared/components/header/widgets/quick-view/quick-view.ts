@@ -56,5 +56,11 @@ export class QuickView {
       icon: 'ri-window-line',
       permission: ['theme_option.index'],
     },
+    {
+      title: 'add_unit',
+      path: '/units/create',
+      icon: 'ri-ruler-line',
+      permission: ['units.index', 'units.create'],
+    },
   ];
 }
