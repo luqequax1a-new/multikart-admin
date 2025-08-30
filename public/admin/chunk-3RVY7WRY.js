@@ -1,0 +1,1 @@
+import"./chunk-4CLCTAJ7.js";var n=[{path:"",loadComponent:()=>import("./chunk-2CRLBRTA.js").then(e=>e.Menu)},{path:"edit/:id",loadComponent:()=>import("./chunk-6CU5NNGC.js").then(e=>e.EditMenu)}];export{n as MenuRoutes};

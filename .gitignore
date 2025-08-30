@@ -66,3 +66,6 @@ coverage
 # Build outputs
 build/
 dist/
+
+# Configuration files with secrets
+public/assets/data/settings.json

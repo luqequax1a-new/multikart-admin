@@ -284,7 +284,10 @@
                     [accept]="[mediaConfig.image, mediaConfig.video, mediaConfig.audio]"
                     [images]="(product$ | async)?.product_galleries"
                     [helpText]="'*Upload image size 600x600px recommended'"
+                    [enableSorting]="true"
+                    [coverImageIndex]="coverImageIndex"
                     (selectedFiles)="selectImages($event)"
+                    (coverImageChanged)="onCoverImageChanged($event)"
                   />
                 </app-form-fields>
 
@@ -1767,6 +1770,22 @@
                 <app-form-fields
                   [labelClass]="'form-label-title col-sm-3 mb-0'"
                   [gridClass]="'col-sm-9'"
+                  [label]="'canonical_url'"
+                  [for]="'canonical_url'"
+                  [required]="false"
+                >
+                  <input
+                    type="url"
+                    class="form-control"
+                    id="canonical_url"
+                    placeholder="{{ 'enter_canonical_url' | translate }}"
+                    formControlName="canonical_url"
+                  />
+                </app-form-fields>
+
+                <app-form-fields
+                  [labelClass]="'form-label-title col-sm-3 mb-0'"
+                  [gridClass]="'col-sm-9'"
                   [label]="'meta_image'"
                   [for]="'meta_image'"
                   [required]="false"
@@ -1972,6 +1991,27 @@
                       platforms.' }}
                     </p>
                   </div>
+                </app-form-fields>
+
+                <app-form-fields
+                  [labelClass]="'form-label-title col-sm-3 mb-0'"
+                  [gridClass]="'col-sm-9'"
+                  [label]="'status'"
+                  [for]="'is_active'"
+                  [required]="true"
+                >
+                  <div class="form-check form-switch ps-0">
+                    <label class="switch">
+                      <input type="checkbox" id="is_active" formControlName="is_active" />
+                      <span class="switch-state"></span>
+                    </label>
+                    <p class="help-text">
+                      {{ 'Enable this option to make the product active and visible to customers.' | translate }}
+                    </p>
+                  </div>
+                  @if(form.controls['is_active'].touched && form.controls['is_active'].errors?.['required']){
+                  <div class="invalid-feedback">{{ 'status_is_required' | translate }}</div>
+                  }
                 </app-form-fields>
 
                 @if(form.controls['product_type']?.value !== 'digital'){

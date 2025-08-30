@@ -1,0 +1,1 @@
+import"./chunk-4CLCTAJ7.js";var t=[{path:"",loadComponent:()=>import("./chunk-2HELRQ65.js").then(e=>e.Tax)},{path:"create",loadComponent:()=>import("./chunk-MHDPGWZZ.js").then(e=>e.CreateTax)},{path:"edit/:id",loadComponent:()=>import("./chunk-LHN4L3KV.js").then(e=>e.EditTax)}];export{t as taxRoutes};

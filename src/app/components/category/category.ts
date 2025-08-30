@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, viewChild, input } from '@angular/core';
+import { Component, inject, viewChild, input, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -33,6 +33,7 @@ import { CategoryState } from '../../shared/store/state/category.state';
   ],
   templateUrl: './category.html',
   styleUrl: './category.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Category {
   private store = inject(Store);

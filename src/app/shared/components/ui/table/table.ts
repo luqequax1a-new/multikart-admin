@@ -9,6 +9,7 @@ import {
   PLATFORM_ID,
   Renderer2,
   viewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Params } from '@angular/router';
@@ -53,6 +54,7 @@ import { Pagination } from '../pagination/pagination';
   ],
   templateUrl: './table.html',
   styleUrl: './table.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Table {
   private document = inject<Document>(DOCUMENT);
@@ -369,6 +371,10 @@ export class Table {
       : new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(stockQty);
     
     return `${formattedQty} ${unit.text || ''}`;
+  }
+
+  trackByIndex(index: number, item: any): any {
+    return item.id || index;
   }
 
   ngOnDestroy() {

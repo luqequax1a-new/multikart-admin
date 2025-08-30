@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { Store } from '@ngxs/store';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { PageWrapper } from '../../shared/components/page-wrapper/page-wrapper';
 import { PriceTrPipe } from '../../shared/pipes/price-tr.pipe';
@@ -28,12 +28,14 @@ import { NotificationService } from '../../shared/services/notification.service'
     RouterModule,
     TranslateModule,
     FormsModule,
+    ReactiveFormsModule,
     PageWrapper,
     PriceTrPipe,
     StockTrPipe,
   ],
   templateUrl: './product.html',
   styleUrl: './product.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Product {
   private store = inject(Store);
@@ -42,12 +44,14 @@ export class Product {
   private categoryService = inject(CategoryService);
   private brandService = inject(BrandService);
   private notificationService = inject(NotificationService);
+  private formBuilder = inject(FormBuilder);
 
   // Basic properties
   pageSize: number = 15;
   query: string = '';
   selectedCategory: any = null;
   selectedBrand: any = null;
+  selectedStatus: string = '';
   products: IProduct[] = [];
   loading: boolean = false;
 
@@ -73,8 +77,23 @@ export class Product {
   showDeleteModal: boolean = false;
   productToDelete: IProduct | null = null;
 
-  // Duplicate
+  // Quick Edit modal properties
+  showQuickEditModal: boolean = false;
+  quickEditForm: FormGroup;
+  quickEditLoading: boolean = false;
+  productToEdit: IProduct | null = null;
+
+ // Duplicate loading state
   duplicatingId: number | null = null;
+
+  constructor() {
+    this.quickEditForm = this.formBuilder.group({
+      name: ['', [Validators.required]],
+      price: ['', [Validators.required, Validators.min(0)]],
+      stock_qty: ['', [Validators.required, Validators.min(0)]],
+      is_active: [true]
+    });
+  }
 
   ngOnInit() {
     this.store.select(ProductState.product).subscribe((products) => {
@@ -110,6 +129,7 @@ export class Product {
 
   loadProducts() {
     this.loading = true;
+    this.itemsPerPage = this.pageSize; // Sync itemsPerPage with pageSize
     const params: any = {
       page: this.currentPage,
       per_page: this.itemsPerPage
@@ -125,6 +145,10 @@ export class Product {
 
     if (this.selectedBrand) {
       params.brand_id = this.selectedBrand;
+    }
+
+    if (this.selectedStatus !== '') {
+      params.is_active = this.selectedStatus;
     }
 
     this.store.dispatch(new GetProductsAction(params)).subscribe({
@@ -152,11 +176,49 @@ export class Product {
   }
 
   onCategoryChange() {
+    this.currentPage = 1;
     this.loadProducts();
   }
 
   onBrandChange() {
+    this.currentPage = 1;
     this.loadProducts();
+  }
+
+  onStatusChange() {
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  // Pagination methods
+  getTotalPages(): number {
+    return Math.ceil(this.totalItems / this.itemsPerPage);
+  }
+
+  getPageNumbers(): number[] {
+    const totalPages = this.getTotalPages();
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.getTotalPages() && page !== this.currentPage) {
+      this.currentPage = page;
+      this.loadProducts();
+    }
   }
 
   toggleStatus(product: IProduct) {
@@ -328,5 +390,44 @@ export class Product {
         this.duplicatingId = null;
       }
     });
+  }
+
+  // Quick Edit Modal Methods
+  openQuickEdit(product: IProduct) {
+    this.productToEdit = product;
+    this.quickEditForm.patchValue({
+      name: product.name,
+      price: product.price,
+      stock_qty: product.stock_qty,
+      is_active: product.is_active
+    });
+    this.showQuickEditModal = true;
+  }
+
+  closeQuickEditModal() {
+    this.showQuickEditModal = false;
+    this.productToEdit = null;
+    this.quickEditForm.reset();
+  }
+
+  saveQuickEdit() {
+    if (this.quickEditForm.valid && this.productToEdit) {
+      this.quickEditLoading = true;
+      const formData = this.quickEditForm.value;
+      
+      this.productService.update(this.productToEdit.id, formData).subscribe({
+        next: (response) => {
+          this.quickEditLoading = false;
+          this.notificationService.showSuccess('Ürün başarıyla güncellendi.');
+          this.closeQuickEditModal();
+          this.loadProducts();
+        },
+        error: (error) => {
+          this.quickEditLoading = false;
+          console.error('Ürün güncellenirken hata:', error);
+          this.notificationService.showError('Ürün güncellenirken bir hata oluştu.');
+        }
+      });
+    }
   }
 }

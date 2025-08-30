@@ -22,7 +22,7 @@
   <div class="row g-3 mb-3">
     <div class="col-12 col-md-3">
       <label class="form-label small mb-1">Göster</label>
-      <select class="form-select form-select-sm" [(ngModel)]="pageSize" (change)="loadProducts()">
+      <select class="form-select form-select-sm" [(ngModel)]="pageSize" (change)="currentPage = 1; loadProducts()">
         <option [ngValue]="15">15</option>
         <option [ngValue]="25">25</option>
         <option [ngValue]="50">50</option>
@@ -31,7 +31,7 @@
 
     <div class="col-12 col-md-3">
       <label class="form-label small mb-1">Ara</label>
-      <input class="form-control form-control-sm" placeholder="Ürün ara..." [(ngModel)]="query" (keyup.enter)="loadProducts()">
+      <input class="form-control form-control-sm" placeholder="Ürün ara..." [(ngModel)]="query" (keyup.enter)="currentPage = 1; loadProducts()">
     </div>
 
     <div class="col-12 col-md-3">
@@ -47,6 +47,15 @@
       <select class="form-select form-select-sm" [(ngModel)]="selectedBrand" (change)="onBrandChange()">
         <option value="">Seçiniz</option>
         <option *ngFor="let brand of brands" [value]="brand.id">{{ brand.name }}</option>
+      </select>
+    </div>
+
+    <div class="col-12 col-md-3">
+      <label class="form-label small mb-1">Durum</label>
+      <select class="form-select form-select-sm" [(ngModel)]="selectedStatus" (change)="onStatusChange()">
+        <option value="">Tümü</option>
+        <option value="1">Aktif</option>
+        <option value="0">Pasif</option>
       </select>
     </div>
   </div>
@@ -123,6 +132,13 @@
                 <div class="btn-group" role="group" style="white-space: nowrap;">
 
                   <button type="button" 
+                          class="btn btn-sm btn-outline-info rounded-pill me-1"
+                          (click)="openQuickEdit(p)"
+                          title="Hızlı Düzenle"
+                          style="min-width: 36px; height: 36px;">
+                    <i class="ri-edit-2-line"></i>
+                  </button>
+                  <button type="button" 
                           class="btn btn-sm btn-outline-primary rounded-pill me-1"
                           [routerLink]="['/product/edit', p.id]"
                           title="Detaylı Düzenle"
@@ -170,6 +186,40 @@
           </tbody>
         </table>
       </div>
+      
+      <!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center mt-3" *ngIf="totalItems > 0">
+        <div class="text-muted small">
+          Toplam {{ totalItems }} ürün, sayfa {{ currentPage }} / {{ getTotalPages() }}
+        </div>
+        <nav>
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link" (click)="goToPage(1)" [disabled]="currentPage === 1">
+                <i class="ri-skip-back-line"></i>
+              </button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <button class="page-link" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+                <i class="ri-arrow-left-s-line"></i>
+              </button>
+            </li>
+            <li class="page-item" *ngFor="let page of getPageNumbers()" [class.active]="page === currentPage">
+              <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+              <button class="page-link" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === getTotalPages()">
+                <i class="ri-arrow-right-s-line"></i>
+              </button>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+              <button class="page-link" (click)="goToPage(getTotalPages())" [disabled]="currentPage === getTotalPages()">
+                <i class="ri-skip-forward-line"></i>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   </div>
 </app-page-wrapper>
@@ -216,3 +266,57 @@
 
 <!-- Delete Modal Backdrop -->
 <div class="modal-backdrop fade" [class.show]="showDeleteModal" *ngIf="showDeleteModal" (click)="closeDeleteModal()"></div>
+
+<!-- Quick Edit Modal -->
+<div class="modal fade" [class.show]="showQuickEditModal" [style.display]="showQuickEditModal ? 'block' : 'none'" *ngIf="showQuickEditModal">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="ri-edit-line me-2"></i>Hızlı Düzenle
+        </h5>
+        <button type="button" class="btn-close" (click)="closeQuickEditModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="quickEditForm" (ngSubmit)="saveQuickEdit()">
+          <div class="row">
+            <div class="col-12 mb-3">
+              <label class="form-label">Ürün Adı</label>
+              <input type="text" class="form-control" formControlName="name" placeholder="Ürün adını girin">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Fiyat</label>
+              <input type="number" class="form-control" formControlName="price" placeholder="0.00" step="0.01">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Stok</label>
+              <input type="number" class="form-control" formControlName="stock_qty" placeholder="0">
+            </div>
+            <div class="col-12 mb-3">
+              <label class="form-label">Durum</label>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" formControlName="is_active" id="quickEditStatus">
+                <label class="form-check-label" for="quickEditStatus">
+                  Aktif
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeQuickEditModal()">
+          <i class="ri-close-line me-1"></i>İptal
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveQuickEdit()" [disabled]="quickEditForm.invalid || quickEditLoading">
+          <i class="ri-save-line me-1" *ngIf="!quickEditLoading"></i>
+          <i class="ri-loader-4-line me-1 spin" *ngIf="quickEditLoading"></i>
+          {{ quickEditLoading ? 'Kaydediliyor...' : 'Kaydet' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Edit Modal Backdrop -->
+<div class="modal-backdrop fade" [class.show]="showQuickEditModal" *ngIf="showQuickEditModal" (click)="closeQuickEditModal()"></div>

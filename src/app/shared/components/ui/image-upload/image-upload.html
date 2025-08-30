@@ -1,4 +1,4 @@
-<ul class="image-select-list cursor-pointer">
+<ul class="image-select-list cursor-pointer" #imageList>
   <li class="choosefile-input" (click)="MediaModal().openModal()">
     <div class="media-img-box">
       <img src="assets/images/add-image.png" class="img-fluid add-icon" alt="img"/>
@@ -6,7 +6,7 @@
   </li>
 
   @for(img of showImages; track img; let i = $index;){
-  <li>
+  <li class="sortable-item" [class.is-cover]="coverImageIndex() === i">
     @if(img){
     <div class="media-img-box">
       @if(img && img.mime_type && img.mime_type.startsWith('image')){
@@ -14,13 +14,45 @@
       }@else {
       <img [src]="getMimeTypeImage(img.mime_type)" class="img-fluid" alt="image" />
       }
-      <a
-        href="javascript:void(0)"
-        class="remove-icon"
-        id="remove-icon{{i}}"
-        (click)="remove(i, 'multiple');"
-        ><i class="ri-close-line text-white"></i
-      ></a>
+      
+      <!-- Cover Image Badge -->
+      @if(coverImageIndex() === i){
+      <div class="cover-badge">
+        <i class="ri-star-fill"></i>
+        <span>{{ 'cover' | translate }}</span>
+      </div>
+      }
+      
+      <!-- Action Buttons -->
+      <div class="image-actions">
+        @if(multipleImage() && enableSorting()){
+        <button 
+          type="button" 
+          class="action-btn set-cover-btn" 
+          (click)="setCoverImage(i)"
+          [class.active]="coverImageIndex() === i"
+          title="{{ 'set_as_cover' | translate }}"
+        >
+          <i class="ri-star-line"></i>
+        </button>
+        }
+        
+        <button 
+          type="button" 
+          class="action-btn remove-btn"
+          (click)="remove(i, 'multiple')"
+          title="{{ 'remove' | translate }}"
+        >
+          <i class="ri-close-line"></i>
+        </button>
+      </div>
+      
+      <!-- Drag Handle -->
+      @if(multipleImage() && enableSorting() && showImages.length > 1){
+      <div class="drag-handle" title="{{ 'drag_to_reorder' | translate }}">
+        <i class="ri-drag-move-2-line"></i>
+      </div>
+      }
     </div>
     <h6>{{ img?.file_name }}</h6>
     }

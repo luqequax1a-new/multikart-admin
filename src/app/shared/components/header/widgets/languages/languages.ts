@@ -24,21 +24,21 @@ export class Languages {
   public active: boolean = false;
   public languages: ILanguage[] = [
     {
+      language: 'Türkçe',
+      code: 'tr',
+      icon: 'tr',
+    },
+    {
       language: 'English',
       code: 'en',
       icon: 'us',
     },
-    {
-      language: 'Français',
-      code: 'fr',
-      icon: 'fr',
-    },
   ];
 
   public selectedLanguage: ILanguage = {
-    language: 'English',
-    code: 'en',
-    icon: 'us',
+    language: 'Türkçe',
+    code: 'tr',
+    icon: 'tr',
   };
 
   ngOnInit() {
@@ -59,6 +59,10 @@ export class Languages {
     this.active = false;
     this.translate.use(language.code);
     this.selectedLanguage = language;
+    
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('language', JSON.stringify(language));
+    }
   }
 
   clickHeaderOnMobile() {

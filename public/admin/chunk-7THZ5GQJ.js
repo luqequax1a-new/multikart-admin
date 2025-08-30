@@ -1,0 +1,1 @@
+import"./chunk-4CLCTAJ7.js";var t=[{path:"",loadComponent:()=>import("./chunk-ZMSHOC7X.js").then(e=>e.Units)},{path:"create",loadComponent:()=>import("./chunk-AZTV2CA7.js").then(e=>e.CreateUnits)},{path:"edit/:id",loadComponent:()=>import("./chunk-VK7OZBOS.js").then(e=>e.EditUnits)}];export{t as unitsRoutes};

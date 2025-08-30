@@ -34,6 +34,7 @@
     "@ngxs/storage-plugin": "^20.1.0",
     "@ngxs/store": "^20.1.0",
     "@popperjs/core": "^2.11.8",
+    "@types/sortablejs": "^1.15.8",
     "apexcharts": "^4.5.0",
     "bootstrap": "^5.3.3",
     "express": "^4.18.2",
@@ -46,6 +47,7 @@
     "ngx-print": "^2.0.0",
     "ngx-toastr": "^19.0.0",
     "rxjs": "~7.8.0",
+    "sortablejs": "^1.15.6",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },

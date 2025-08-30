@@ -1,0 +1,1 @@
+import"./chunk-4CLCTAJ7.js";var r=[{path:"",loadComponent:()=>import("./chunk-WLH7K7IH.js").then(e=>e.Currency)},{path:"create",loadComponent:()=>import("./chunk-WRIRMVCT.js").then(e=>e.CreateCurrency)},{path:"edit/:id",loadComponent:()=>import("./chunk-SC5CEVMC.js").then(e=>e.EditCurrency)}];export{r as currencyRoutes};

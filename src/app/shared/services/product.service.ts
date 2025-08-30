@@ -40,6 +40,10 @@ export class ProductService {
     return this.http.put(`${this.baseUrl}/${id}`, product);
   }
 
+  show(id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${id}`);
+  }
+
   getById(id: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/${id}`);
   }

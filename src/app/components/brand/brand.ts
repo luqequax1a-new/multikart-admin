@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Params, Router, RouterModule } from '@angular/router';
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -23,6 +23,7 @@ import { BrandState } from '../../shared/store/state/brand.state';
   imports: [TranslateModule, RouterModule, HasPermissionDirective, PageWrapper, Table],
   templateUrl: './brand.html',
   styleUrl: './brand.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Brand {
   private store = inject(Store);

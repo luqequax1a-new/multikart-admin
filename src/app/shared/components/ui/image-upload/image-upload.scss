@@ -1,0 +1,210 @@
+.image-select-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+
+    &:hover {
+      border-color: #007bff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+    }
+
+    &.choosefile-input {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8f9fa;
+      cursor: pointer;
+      border: 2px dashed #dee2e6;
+
+      &:hover {
+        border-color: #007bff;
+        background: #e7f3ff;
+      }
+
+      .media-img-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+
+        .add-icon {
+          width: 40px;
+          height: 40px;
+          opacity: 0.6;
+        }
+      }
+    }
+
+    &.sortable-item {
+      cursor: move;
+      
+      &.is-cover {
+        border-color: #ffc107;
+        box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.25);
+      }
+    }
+
+    .media-img-box {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .cover-badge {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        background: linear-gradient(135deg, #ffc107, #ff8c00);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        z-index: 3;
+        
+        i {
+          font-size: 8px;
+        }
+      }
+
+      .image-actions {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        display: flex;
+        gap: 4px;
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 2;
+
+        .action-btn {
+          width: 24px;
+          height: 24px;
+          border: none;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 12px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &.set-cover-btn {
+            background: rgba(255, 193, 7, 0.9);
+            
+            &:hover {
+              background: #ffc107;
+              transform: scale(1.1);
+            }
+            
+            &.active {
+              background: #ffc107;
+              
+              i::before {
+                content: "\ea7a"; // ri-star-fill
+              }
+            }
+          }
+
+          &.remove-btn {
+            background: rgba(220, 53, 69, 0.9);
+            
+            &:hover {
+              background: #dc3545;
+              transform: scale(1.1);
+            }
+          }
+        }
+      }
+
+      .drag-handle {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        width: 20px;
+        height: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 10px;
+        cursor: move;
+        opacity: 0;
+        transition: all 0.3s ease;
+        z-index: 2;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.9);
+        }
+      }
+
+      &:hover {
+        .image-actions,
+        .drag-handle {
+          opacity: 1;
+        }
+      }
+    }
+
+    h6 {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      margin: 0;
+      padding: 8px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+      color: white;
+      font-size: 11px;
+      font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+// Sortable.js styles
+.sortable-ghost {
+  opacity: 0.5;
+  background: #f8f9fa;
+  border: 2px dashed #007bff !important;
+}
+
+.sortable-chosen {
+  transform: rotate(5deg);
+  z-index: 1000;
+}
+
+.sortable-drag {
+  opacity: 0.8;
+  transform: rotate(5deg);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}

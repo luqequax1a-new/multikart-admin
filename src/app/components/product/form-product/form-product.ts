@@ -317,6 +317,7 @@ export class FormProduct {
   private search = new Subject<string>();
   public textArea = new FormControl('');
   public slugTouched = false;
+  public coverImageIndex: number = 0;
   
   constructor() {
     const platformId = this.platformId;
@@ -383,11 +384,13 @@ export class FormProduct {
       watermark_image_id: new FormControl(),
       product_galleries_id: new FormControl(),
       size_chart_image_id: new FormControl(),
+      is_active: new FormControl(1, [Validators.required]),
       variants: this.formBuilder.array([], []),
       variations: this.formBuilder.array([], []),
       attributes_ids: new FormControl([]),
       meta_title: new FormControl(),
       meta_description: new FormControl(),
+      canonical_url: new FormControl(),
       product_meta_image_id: new FormControl(),
       safe_checkout: new FormControl(1),
       secure_checkout: new FormControl(1),
@@ -402,7 +405,6 @@ export class FormProduct {
       is_trending: new FormControl(0),
       is_return: new FormControl(0),
       status: new FormControl(1),
-      is_active: new FormControl(1),
     });
   }
 
@@ -534,8 +536,10 @@ export class FormProduct {
               watermark_image_id: product?.watermark_image_id,
               size_chart_image_id: product?.size_chart_image_id,
               attributes_ids: attributes,
+              is_active: product?.is_active ?? 1,
               meta_title: product?.meta_title,
               meta_description: product?.meta_description,
+              canonical_url: product?.canonical_url,
               product_meta_image_id: product?.product_meta_image_id,
               safe_checkout: product?.safe_checkout,
               secure_checkout: product?.secure_checkout,
@@ -889,6 +893,12 @@ export class FormProduct {
 
   selectVariationMainFiles(data: IAttachment, index: number) {
     this.variationControl.at(index).get('variation_digital_file_ids')?.setValue(data?.id);
+  }
+
+  onCoverImageChanged(index: number) {
+    this.coverImageIndex = index;
+    // Optionally update form control or trigger other actions
+    console.log('Cover image changed to index:', index);
   }
 
   generateCombinations(
